@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Students</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #7bd6e7;
+            margin: 0;
+            padding: 5px;
+            color: #222;
+        }
+
+        /* White background only for title and navigation */
+        .top-header {
+            background-color: #FFFFFF;
+            width: 100%;
+            padding: 25px 20px 15px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+
+        .top-header h1 {
+            background-color: #FFFFFF;
+            color: #2864e8;
+            font-size: 36px;
+            margin: 20px 0 30px;
+            padding: 5px;
+        }
+
+        .top-header nav {
+            background-color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px 28px;
+            padding: 10px 0;
+        }
+
+        .top-header nav a {
+            color: #0066ff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .top-header nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Student list content */
+        .container {
+            max-width: 1000px;
+            margin: 25px auto;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .banner {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 25px;
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: #2864e8;
+            margin-bottom: 20px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #FFFFFF;
+        }
+
+        th, td {
+            border: 1px solid #cbd7ee;
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #2864e8;
+            color: #FFFFFF;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f2f6ff;
+        }
+
+        tbody tr:hover {
+            background-color: #e2ebff;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        /* Refresh button */
+        .refresh-button {
+            display: inline-block;
+            background-color: #2864e8;
+            color: #FFFFFF;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .refresh-button:hover {
+            background-color: #174bb5;
+        }
+
+        /* Go to Home Page button */
+        .home-button {
+            display: inline-block;
+            background-color: #2864e8;
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-top: 25px;
+        }
+
+        .home-button:hover {
+            background-color: #174bb5;
+        }
+
+        @media (max-width: 600px) {
+            .top-header {
+                padding: 15px 10px;
+            }
+
+            .top-header h1 {
+                font-size: 27px;
+            }
+
+            .top-header nav {
+                gap: 12px 18px;
+            }
+
+            .container {
+                padding: 15px 8px;
+            }
+
+            th, td {
+                padding: 9px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- WHITE HEADER -->
+    <header class="top-header">
+        <h1>STUDENT LIST</h1>
+
+        <nav>
+            <a href="/">Home</a>
+            <a href="/list.html">List Students</a>
+            <a href="/listOne.html">List Required Student</a>
+            <a href="/insert.html">Insert Student</a>
+            <a href="/update.html">Update Student</a>
+            <a href="/delete.html">Delete Student</a>
+        </nav>
+    </header>
+
+    <!-- STUDENT LIST CONTENT -->
+    <main class="container">
+
+        <img
+            class="banner"
+            src="image/student%20list.jpg"
+            alt="Student List"
+        >
+
+        <h2>All Student Records</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Total Marks</th>
+                    </tr>
+                </thead>
+
+                <tbody id="studentTableBody">
+                    <tr>
+                        <td colspan="3">Loading student records...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p id="status" role="status"></p>
+
+        <button
+            type="button"
+            class="refresh-button"
+            onclick="loadStudents()"
+        >
+            Refresh Student List
+        </button>
+
+        <br>
+
+        <a href="/" class="home-button">Go to Home Page</a>
+
+    </main>
+
+    <script>
+        async function loadStudents() {
+            const tableBody =
+                document.getElementById("studentTableBody");
+
+            const status =
+                document.getElementById("status");
+
+            tableBody.innerHTML =
+                '<tr><td colspan="3">Loading student records...</td></tr>';
+
+            status.textContent = "";
+            status.style.color = "#222";
+
+            try {
+                const response = await fetch("/students");
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Unable to load student records."
+                    );
+                }
+
+                const students = await response.json();
+
+                tableBody.innerHTML = "";
+
+                if (!Array.isArray(students) ||
+                    students.length === 0) {
+
+                    tableBody.innerHTML =
+                        '<tr><td colspan="3">No student records found.</td></tr>';
+
+                    status.textContent = "No student records available.";
+                    return;
+                }
+
+                students.forEach(student => {
+                    const row = document.createElement("tr");
+
+                    const idCell = document.createElement("td");
+                    const nameCell = document.createElement("td");
+                    const totalCell = document.createElement("td");
+
+                    idCell.textContent = student.student_id;
+                    nameCell.textContent = student.student_name;
+                    totalCell.textContent = student.total;
+
+                    row.appendChild(idCell);
+                    row.appendChild(nameCell);
+                    row.appendChild(totalCell);
+
+                    tableBody.appendChild(row);
+                });
+
+                status.textContent =
+                    "Total students: " + students.length;
+
+                status.style.color = "green";
+
+            } catch (error) {
+                tableBody.innerHTML =
+                    '<tr><td colspan="3">Could not load student records.</td></tr>';
+
+                status.textContent =
+                    error.message +
+                    " Check whether your server is running.";
+
+                status.style.color = "red";
+            }
+        }
+
+        // Load records when the page opens
+        loadStudents();
+    </script>
+
+</body>
+</html>

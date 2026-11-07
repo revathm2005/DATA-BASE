@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Required Student</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #92f9b1;
+            margin: 0;
+            padding: 5px;
+            color: #222;
+        }
+
+        /* White background only for title and navigation */
+        .top-header {
+            background-color: #FFFFFF;
+            width: 100%;
+            padding: 25px 20px 15px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+
+        .top-header h1 {
+            background-color: #FFFFFF;
+            color: #2864e8;
+            font-size: 36px;
+            margin: 20px 0 30px;
+            padding: 5px;
+        }
+
+        .top-header nav {
+            background-color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px 28px;
+            padding: 10px 0;
+        }
+
+        .top-header nav a {
+            color: #0066ff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .top-header nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main content */
+        .container {
+            max-width: 900px;
+            margin: 25px auto;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .banner {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 25px;
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: #2864e8;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 20px 0 10px;
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            border: 1px solid #b9c9e8;
+            border-radius: 6px;
+            background-color: #FFFFFF;
+            font-size: 16px;
+        }
+
+        .student-details {
+            max-width: 500px;
+            margin: 25px auto;
+            padding: 20px;
+            background-color: #FFFFFF;
+            border: 1px solid #cbd7ee;
+            border-radius: 10px;
+            text-align: left;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .student-details p {
+            padding: 10px;
+            margin: 0;
+            border-bottom: 1px solid #e3eaf7;
+            overflow-wrap: anywhere;
+        }
+
+        .student-details p:last-child {
+            border-bottom: none;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .home-button {
+            display: inline-block;
+            background-color: #2864e8;
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-top: 25px;
+        }
+
+        .home-button:hover {
+            background-color: #174bb5;
+        }
+
+        @media (max-width: 600px) {
+            .top-header {
+                padding: 15px 10px;
+            }
+
+            .top-header h1 {
+                font-size: 27px;
+            }
+
+            .top-header nav {
+                gap: 12px 18px;
+            }
+
+            .container {
+                padding: 15px 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- WHITE HEADER -->
+    <header class="top-header">
+        <h1>LIST REQUIRED STUDENT</h1>
+
+        <nav>
+            <a href="/">Home</a>
+            <a href="/list.html">List Students</a>
+            <a href="/listOne.html">List Required Student</a>
+            <a href="/insert.html">Insert Student</a>
+            <a href="/update.html">Update Student</a>
+            <a href="/delete.html">Delete Student</a>
+        </nav>
+    </header>
+
+    <!-- REQUIRED STUDENT CONTENT -->
+    <main class="container">
+
+        <img
+            class="banner"
+            src="image/require%20student%20list.jpg"
+            alt="Required Student List"
+        >
+
+        <h2>View Required Student Details</h2>
+
+        <label for="studentId">Select Student ID</label>
+
+        <select id="studentId">
+            <option value="">Loading student records...</option>
+        </select>
+
+        <div id="studentDetails" class="student-details" hidden>
+            <p>
+                <strong>Student ID:</strong>
+                <span id="detailId"></span>
+            </p>
+
+            <p>
+                <strong>Student Name:</strong>
+                <span id="detailName"></span>
+            </p>
+
+            <p>
+                <strong>Total Marks:</strong>
+                <span id="detailTotal"></span>
+            </p>
+        </div>
+
+        <p id="status" role="status"></p>
+
+        <a href="/" class="home-button">Go to Home Page</a>
+
+    </main>
+
+    <script>
+        const studentSelect = document.getElementById("studentId");
+        const studentDetails = document.getElementById("studentDetails");
+        const statusMessage = document.getElementById("status");
+
+        // Load student IDs into the dropdown
+        async function loadStudents() {
+            try {
+                const response = await fetch("/students");
+
+                if (!response.ok) {
+                    throw new Error("Unable to load student records.");
+                }
+
+                const students = await response.json();
+
+                studentSelect.innerHTML =
+                    '<option value="">-- Select Student ID --</option>';
+
+                students.forEach(student => {
+                    const option = document.createElement("option");
+
+                    option.value = student.student_id;
+                    option.textContent =
+                        student.student_id + " - " + student.student_name;
+
+                    studentSelect.appendChild(option);
+                });
+
+                if (students.length === 0) {
+                    studentSelect.innerHTML =
+                        '<option value="">No students found</option>';
+                }
+
+            } catch (error) {
+                studentSelect.innerHTML =
+                    '<option value="">Failed to load students</option>';
+
+                statusMessage.textContent = error.message;
+                statusMessage.style.color = "red";
+            }
+        }
+
+        // Fetch and display the selected student's details
+        studentSelect.addEventListener("change", async function () {
+            const studentId = this.value;
+
+            studentDetails.hidden = true;
+            statusMessage.textContent = "";
+
+            if (!studentId) {
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    "/students/" + encodeURIComponent(studentId)
+                );
+
+                if (!response.ok) {
+                    throw new Error("Unable to retrieve student details.");
+                }
+
+                const result = await response.json();
+
+                const student = Array.isArray(result)
+                    ? result[0]
+                    : result;
+
+                if (!student || student.student_id == null) {
+                    throw new Error("Student not found.");
+                }
+
+                document.getElementById("detailId").textContent =
+                    student.student_id;
+
+                document.getElementById("detailName").textContent =
+                    student.student_name;
+
+                document.getElementById("detailTotal").textContent =
+                    student.total;
+
+                studentDetails.hidden = false;
+
+            } catch (error) {
+                statusMessage.textContent = error.message;
+                statusMessage.style.color = "red";
+            }
+        });
+
+        // Load records when the page opens
+        loadStudents();
+    </script>
+
+</body>
+</html>

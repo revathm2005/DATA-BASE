@@ -1,0 +1,416 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Student</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f79ae1;
+            margin: 0;
+            padding: 5px;
+            color: #222;
+        }
+
+        /* White title and navigation header */
+        .top-header {
+            background-color: #FFFFFF;
+            width: 100%;
+            padding: 25px 20px 15px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+
+        .top-header h1 {
+            background-color: #FFFFFF;
+            color: #2864e8;
+            font-size: 36px;
+            margin: 20px 0 30px;
+            padding: 5px;
+        }
+
+        .top-header nav {
+            background-color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px 28px;
+            padding: 10px 0;
+        }
+
+        .top-header nav a {
+            color: #0066ff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .top-header nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Update student content */
+        .container {
+            max-width: 850px;
+            margin: 25px auto;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .banner {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 25px;
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: #2864e8;
+            margin-bottom: 20px;
+        }
+
+        .student-form {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #b9c9e8;
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: #FFFFFF;
+        }
+
+        select:focus,
+        input:focus {
+            outline: 2px solid #2864e8;
+            border-color: #2864e8;
+        }
+
+        .update-button {
+            display: block;
+            width: 100%;
+            background-color: #2864e8;
+            color: #FFFFFF;
+            border: none;
+            padding: 13px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .update-button:hover {
+            background-color: #174bb5;
+        }
+
+        .update-button:disabled {
+            background-color: #999999;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            overflow-wrap: anywhere;
+        }
+
+        .home-button {
+            display: inline-block;
+            background-color: #2864e8;
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-top: 25px;
+        }
+
+        .home-button:hover {
+            background-color: #174bb5;
+        }
+
+        @media (max-width: 600px) {
+            .top-header {
+                padding: 15px 10px;
+            }
+
+            .top-header h1 {
+                font-size: 27px;
+            }
+
+            .top-header nav {
+                gap: 12px 18px;
+            }
+
+            .container {
+                padding: 15px 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- WHITE HEADER -->
+    <header class="top-header">
+        <h1>UPDATE STUDENT</h1>
+
+        <nav>
+            <a href="/">Home</a>
+            <a href="/list.html">List Students</a>
+            <a href="/listOne.html">List Required Student</a>
+            <a href="/insert.html">Insert Student</a>
+            <a href="/update.html">Update Student</a>
+            <a href="/delete.html">Delete Student</a>
+        </nav>
+    </header>
+
+    <!-- UPDATE STUDENT FORM -->
+    <main class="container">
+
+        <img
+            class="banner"
+            src="image/update.jpg"
+            alt="Update Student"
+        >
+
+        <h2>Update Student Details</h2>
+
+        <form id="updateForm" class="student-form">
+
+            <div class="form-group">
+                <label for="studentId">Select Student ID</label>
+
+                <select id="studentId" required>
+                    <option value="">Loading students...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="studentName">Student Name</label>
+
+                <input
+                    type="text"
+                    id="studentName"
+                    placeholder="Select a student first"
+                    required
+                    disabled
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="totalMarks">Total Marks</label>
+
+                <input
+                    type="number"
+                    id="totalMarks"
+                    placeholder="Enter total marks"
+                    min="0"
+                    required
+                    disabled
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="update-button"
+                id="updateButton"
+                disabled
+            >
+                Update Student
+            </button>
+
+        </form>
+
+        <p id="status" role="status"></p>
+
+        <a href="/" class="home-button">Go to Home Page</a>
+
+    </main>
+
+    <script>
+        const studentSelect = document.getElementById("studentId");
+        const studentNameInput = document.getElementById("studentName");
+        const totalMarksInput = document.getElementById("totalMarks");
+        const updateButton = document.getElementById("updateButton");
+        const updateForm = document.getElementById("updateForm");
+        const statusMessage = document.getElementById("status");
+
+        // Load students into the dropdown
+        async function loadStudents() {
+            try {
+                const response = await fetch("/students");
+
+                if (!response.ok) {
+                    throw new Error("Unable to load student records.");
+                }
+
+                const students = await response.json();
+
+                studentSelect.innerHTML =
+                    '<option value="">-- Select Student ID --</option>';
+
+                students.forEach(student => {
+                    const option = document.createElement("option");
+
+                    option.value = student.student_id;
+                    option.textContent =
+                        student.student_id + " - " + student.student_name;
+
+                    studentSelect.appendChild(option);
+                });
+
+                if (students.length === 0) {
+                    studentSelect.innerHTML =
+                        '<option value="">No students found</option>';
+                }
+
+            } catch (error) {
+                studentSelect.innerHTML =
+                    '<option value="">Failed to load students</option>';
+
+                statusMessage.textContent = error.message;
+                statusMessage.style.color = "red";
+            }
+        }
+
+        // Get selected student's current details
+        studentSelect.addEventListener("change", async function () {
+            const studentId = this.value;
+
+            statusMessage.textContent = "";
+            studentNameInput.value = "";
+            totalMarksInput.value = "";
+
+            studentNameInput.disabled = true;
+            totalMarksInput.disabled = true;
+            updateButton.disabled = true;
+
+            if (!studentId) {
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    "/students/" + encodeURIComponent(studentId)
+                );
+
+                if (!response.ok) {
+                    throw new Error("Unable to retrieve student details.");
+                }
+
+                const result = await response.json();
+
+                const student = Array.isArray(result)
+                    ? result[0]
+                    : result;
+
+                if (!student || student.student_id == null) {
+                    throw new Error("Student not found.");
+                }
+
+                studentNameInput.value = student.student_name;
+                totalMarksInput.value = student.total;
+
+                studentNameInput.disabled = false;
+                totalMarksInput.disabled = false;
+                updateButton.disabled = false;
+
+            } catch (error) {
+                statusMessage.textContent = error.message;
+                statusMessage.style.color = "red";
+            }
+        });
+
+        // Submit updated details
+        updateForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const studentId = studentSelect.value;
+            const name = studentNameInput.value.trim();
+            const total = totalMarksInput.value;
+
+            if (!studentId || !name || total === "") {
+                statusMessage.textContent =
+                    "Please complete all fields.";
+
+                statusMessage.style.color = "red";
+                return;
+            }
+
+            updateButton.disabled = true;
+            statusMessage.textContent = "Updating student...";
+            statusMessage.style.color = "#222";
+
+            try {
+                const response = await fetch(
+                    "/students/" + encodeURIComponent(studentId),
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            total: Number(total)
+                        })
+                    }
+                );
+
+                const message = await response.text();
+
+                if (!response.ok) {
+                    throw new Error(
+                        message || "Failed to update student."
+                    );
+                }
+
+                statusMessage.textContent =
+                    message || "Student updated successfully!";
+
+                statusMessage.style.color = "green";
+
+                // Refresh the dropdown and retain the selected student
+                const selectedId = studentId;
+                await loadStudents();
+
+                studentSelect.value = selectedId;
+
+            } catch (error) {
+                statusMessage.textContent = error.message;
+                statusMessage.style.color = "red";
+            } finally {
+                updateButton.disabled = !studentSelect.value;
+            }
+        });
+
+        // Load student records when the page opens
+        loadStudents();
+    </script>
+
+</body>
+</html>
